@@ -208,11 +208,12 @@ class FAISSVectorStore:
                     continue
                 
                 # Convert distance to similarity score (lower distance = higher similarity)
-                # For L2 distance, convert to similarity between 0 and 1
-                similarity_score = 1.0 / (1.0 + distance)
-                
-                # Skip results below similarity threshold
-                if similarity_score < self.settings.similarity_threshold:
+                max_distance = 2.0  # Reasonable max for normalized embeddings
+                similarity_score = max(0.0, 1.0 - (distance / max_distance))
+
+                # Use lower threshold for insurance documents
+                similarity_threshold = 0.3  # More permissive than config default
+                if similarity_score < similarity_threshold:
                     continue
                 
                 # Get metadata

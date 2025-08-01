@@ -10,7 +10,8 @@ python-docx==1.1.0
 requests==2.31.0
 
 # ML/AI Stack
-sentence-transformers==2.2.2
+sentence-transformers==2.7.0
+huggingface-hub==0.17.3
 #faiss-cpu==1.7.4
 # Updated LangChain packages for compatibility
 langchain==0.1.20
