@@ -1,0 +1,114 @@
+# deploy/render.yaml
+# Render deployment configuration for HackRx 6.0
+
+services:
+  - type: web
+    name: hackrx-intelligent-system
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: uvicorn src.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: PYTHONPATH
+        value: "."
+      - key: ENVIRONMENT
+        value: "production"
+      - key: LOG_LEVEL
+        value: "INFO"
+      - key: AUTH_TOKEN
+        value: "0b2c1453ccb7985da0c04cd70bca63a5ed5145f8f1b6316b56c1dafabb3e95a7"
+      # Add your API keys as environment variables in Render dashboard:
+      # GEMINI_API_KEY - from https://makersuite.google.com/app/apikey
+      # GROQ_API_KEY - from https://console.groq.com/keys
+
+---
+# deploy/railway.toml
+# Railway deployment configuration
+
+[build]
+  builder = "nixpacks"
+
+[deploy]
+  startCommand = "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
+  healthcheckPath = "/health"
+  healthcheckTimeout = 300
+  restartPolicyType = "ON_FAILURE"
+  restartPolicyMaxRetries = 3
+
+[environments.production.variables]
+  PYTHONPATH = "."
+  ENVIRONMENT = "production"
+  LOG_LEVEL = "INFO"
+  AUTH_TOKEN = "0b2c1453ccb7985da0c04cd70bca63a5ed5145f8f1b6316b56c1dafabb3e95a7"
+
+---
+# deploy/fly.toml  
+# Fly.io deployment configuration
+
+app = "hackrx-intelligent-system"
+primary_region = "ord"
+
+[build]
+  image = "python:3.11-slim"
+
+[env]
+  PORT = "8000"
+  PYTHONPATH = "."
+  ENVIRONMENT = "production"
+  LOG_LEVEL = "INFO"
+  AUTH_TOKEN = "0b2c1453ccb7985da0c04cd70bca63a5ed5145f8f1b6316b56c1dafabb3e95a7"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[http_service.checks]]
+  grace_period = "10s"
+  interval = "30s"
+  method = "GET"
+  timeout = "5s"
+  path = "/health"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
+
+---
+# deploy/vercel.json
+# Vercel deployment configuration (for serverless)
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/main.py"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": ".",
+    "ENVIRONMENT": "production",
+    "LOG_LEVEL": "INFO",
+    "AUTH_TOKEN": "0b2c1453ccb7985da0c04cd70bca63a5ed5145f8f1b6316b56c1dafabb3e95a7"
+  },
+  "functions": {
+    "src/main.py": {
+      "maxDuration": 30
+    }  
+  }
+}

@@ -12,7 +12,9 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
+# First install faiss-cpu and then the rest of the requirements
 RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir faiss-cpu && \
     pip install --no-cache-dir -r requirements.txt
 
 COPY src/ ./src/
