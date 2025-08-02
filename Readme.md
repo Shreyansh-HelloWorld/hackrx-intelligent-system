@@ -66,7 +66,7 @@ Edit `.env` with your API keys:
 # Required API Keys
 GEMINI_API_KEY=your_gemini_key_from_makersuite
 GROQ_API_KEY=your_groq_key_from_console
-AUTH_TOKEN=0b2c1453ccb7985da0c04cd70bca63a5ed5145f8f1b6316b56c1dafabb3e95a7
+AUTH_TOKEN=replace_with_your_own_secure_token
 
 # Optional Configuration
 ENVIRONMENT=development
