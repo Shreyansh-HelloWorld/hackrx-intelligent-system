@@ -1,27 +1,26 @@
 hackrx-intelligent-system/
 ├── src/
-│   ├── main.py                    # ✅ FastAPI app with /hackrx/run
+│   ├── main.py                    #  FastAPI app with /hackrx/run
 │   ├── api/
-│   │   ├── routes.py              # ✅ API integration layer
-│   │   └── middleware.py          # ✅ Auth & logging middleware
+│   │   ├── routes.py              #  API integration layer
+│   │   └── middleware.py          #  Auth & logging middleware
 │   ├── core/
-│   │   ├── document_processor.py  # ✅ PDF/DOCX parsing
-│   │   ├── embeddings.py          # ✅ Text vectorization
-│   │   ├── vector_store.py        # ✅ FAISS semantic search
-│   │   └── llm_handler.py         # ✅ Gemini/Groq failover
+│   │   ├── document_processor.py  #  PDF/DOCX parsing
+│   │   ├── embeddings.py          #  Text vectorization
+│   │   ├── vector_store.py        #  FAISS semantic search
+│   │   └── llm_handler.py         #  Gemini/Groq failover
 │   ├── reasoning/
-│   │   └── query_processor.py     # ✅ Query analysis & reasoning
+│   │   └── query_processor.py     #  Query analysis & reasoning
 │   └── utils/
-│       ├── config.py              # ✅ Configuration management
-│       ├── logger.py              # ✅ Logging system
-│       └── helpers.py             # ✅ Utility functions
+│       ├── config.py              #  Configuration management
+│       ├── logger.py              #  Logging system
+│       └── helpers.py             #  Utility functions
 ├── tests/
-│   └── test_api.py                # ✅ Comprehensive test suite
+│   └── test_api.py                #  Comprehensive test suite
 ├── deploy/
-│   ├── render.yaml                # ✅ Render deployment
-│   ├── railway.toml               # ✅ Railway config
-│   └── fly.toml                   # ✅ Fly.io config
-├── requirements.txt               # ✅ All dependencies
-├── Dockerfile                     # ✅ Container configuration
-├── setup.sh                       # ✅ Complete setup script
-└── README.md                      # ✅ Full documentation
+│   ├── render.yaml                #  Render deployment
+|
+├── requirements.txt               #  All dependencies
+├── Dockerfile                     #  Container configuration
+├── setup.sh                       #  Complete setup script
+└── README.md                      #  Full documentation
