@@ -29,7 +29,8 @@ RUN pip install --no-cache-dir faiss-cpu
 
 # Copy application code
 COPY --chown=user src/ ./src/
-COPY --chown=user .env.example .env
+# Create basic .env file (real environment variables set via HF Spaces)
+RUN echo "ENVIRONMENT=production" > .env
 
 # Create necessary directories
 RUN mkdir -p logs models data
