@@ -1,30 +1,45 @@
+# Dockerfile for HackRx HuggingFace Spaces Deployment
+# Optimized for ML workloads with 1GB memory
+
 FROM python:3.11-slim
 
-WORKDIR /app
+# Create user for HuggingFace Spaces (required)
+RUN useradd -m -u 1000 user
+USER user
 
-ENV PYTHONPATH=/app
-ENV PYTHONUNBUFFERED=1
-ENV ENVIRONMENT=production
+# Set environment variables
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH \
+    PYTHONPATH=/home/user/app \
+    PYTHONUNBUFFERED=1 \
+    ENVIRONMENT=production
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# Set working directory
+WORKDIR $HOME/app
 
-COPY requirements.txt .
-# First install faiss-cpu and then the rest of the requirements
+# Copy requirements first for better caching
+COPY --chown=user requirements.txt .
+
+# Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir faiss-cpu && \
     pip install --no-cache-dir -r requirements.txt
 
-COPY src/ ./src/
-COPY .env.example .env
+# Install faiss-cpu separately for better compatibility
+RUN pip install --no-cache-dir faiss-cpu
 
+# Copy application code
+COPY --chown=user src/ ./src/
+COPY --chown=user .env.example .env
+
+# Create necessary directories
 RUN mkdir -p logs models data
 
-EXPOSE 8000
+# Expose HuggingFace Spaces standard port
+EXPOSE 7860
 
+# Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:7860/health || exit 1
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start the FastAPI application on port 7860
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "7860"]

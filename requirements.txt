@@ -1,3 +1,6 @@
+# HackRx 6.0 - HuggingFace Spaces Optimized Requirements
+# Optimized for 1GB memory and fast build times
+
 # Core FastAPI Framework
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
@@ -9,25 +12,31 @@ PyMuPDF==1.23.8
 python-docx==1.1.0
 requests==2.31.0
 
-# ML/AI Stack
+# ML/AI Stack - Optimized versions
 sentence-transformers==2.7.0
 huggingface-hub==0.17.3
-#faiss-cpu==1.7.4
-# Updated LangChain packages for compatibility
-langchain==0.1.20
-langchain-community==0.0.38
+
+# FAISS - Will be installed via Dockerfile for better compatibility
+# faiss-cpu will be installed separately in Dockerfile
+
+# LangChain - Minimal components only
 langchain-core==0.1.52
+langchain-community==0.0.38
 
 # LLM APIs
 google-generativeai==0.3.2
 groq==0.4.1
 
-# Utilities
+# Core Utilities
 python-dotenv==1.0.0
 httpx==0.25.2
 pydantic-settings==2.1.0
 aiofiles==24.1.0
 
-# Development & Testing
+# Development & Testing (minimal)
 pytest==7.4.3
 pytest-asyncio==0.21.1
+
+# Additional utilities for production
+numpy==1.26.4
+scikit-learn==1.7.1

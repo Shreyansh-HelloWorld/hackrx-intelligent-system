@@ -1,5 +1,5 @@
 # src/main.py
-# HackRx 6.0 - FastAPI Main Application Entry Point (RENDER DEPLOYMENT OPTIMIZED)
+# HackRx 6.0 - FastAPI Main Application Entry Point (HUGGINGFACE SPACES OPTIMIZED)
 
 import os
 import time
@@ -41,7 +41,7 @@ class SystemState:
             asyncio.create_task(self._initialize_system())
         
         # Wait for initialization with timeout
-        max_wait = 90  # 90 seconds max wait
+        max_wait = 120  # 2 minutes max wait for HuggingFace Spaces
         wait_interval = 1  # Check every second
         waited = 0
         
@@ -66,7 +66,7 @@ class SystemState:
             self.initialization_start_time = time.time()
             
             try:
-                logger.info("🚀 Starting system initialization...")
+                logger.info("🚀 Starting HuggingFace Spaces initialization...")
                 
                 # Validate environment
                 if not validate_environment():
@@ -83,12 +83,12 @@ class SystemState:
                 self.is_initializing = False
                 
                 init_time = time.time() - self.initialization_start_time
-                logger.info(f"✅ System initialization complete in {init_time:.2f}s")
+                logger.info(f"✅ HuggingFace Spaces initialization complete in {init_time:.2f}s")
                 
             except Exception as e:
                 self.initialization_error = str(e)
                 self.is_initializing = False
-                logger.error(f"❌ System initialization failed: {e}")
+                logger.error(f"❌ HuggingFace Spaces initialization failed: {e}")
                 raise
     
     def get_status(self):
@@ -127,26 +127,27 @@ class HealthResponse(BaseModel):
     version: str = Field(..., description="Application version")
     timestamp: str = Field(..., description="Current timestamp")
     environment: str = Field(..., description="Environment name")
+    platform: str = Field(..., description="Deployment platform")
     system_initialization: dict = Field(..., description="System initialization status")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
-    Application lifespan management - OPTIMIZED for fast Render startup
+    Application lifespan management - OPTIMIZED for HuggingFace Spaces
     """
-    logger.info("🚀 Starting HackRx Intelligent Query-Retrieval System (Fast Boot Mode)")
+    logger.info("🚀 Starting HackRx Intelligent Query-Retrieval System (HuggingFace Spaces)")
     
     try:
         # Minimal startup - just basic validation
         create_directories()
-        logger.info("✅ Fast startup complete - system ready for health checks")
+        logger.info("✅ HuggingFace Spaces fast startup complete - system ready for health checks")
         
         # Start heavy initialization in background (don't wait)
         asyncio.create_task(system_state._initialize_system())
         
     except Exception as e:
-        logger.error(f"❌ Fast startup failed: {e}")
+        logger.error(f"❌ HuggingFace Spaces startup failed: {e}")
         raise
     
     yield
@@ -163,7 +164,7 @@ async def lifespan(app: FastAPI):
 # Create FastAPI application
 app = FastAPI(
     title="HackRx Intelligent Query-Retrieval System",
-    description="LLM-powered document analysis and query answering system for HackRx 6.0",
+    description="LLM-powered document analysis and query answering system for HackRx 6.0 - Deployed on HuggingFace Spaces",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
@@ -207,15 +208,16 @@ async def general_exception_handler(request: Request, exc: Exception):
 @app.get("/health", response_model=HealthResponse)
 async def health_check():
     """
-    Health check endpoint - FAST RESPONSE for Render port detection
+    Health check endpoint - FAST RESPONSE for HuggingFace Spaces
     """
     settings = get_settings()
     
     return HealthResponse(
-        status="healthy",  # Always healthy for Render port detection
+        status="healthy",  # Always healthy for HF Spaces
         version="1.0.0",
         timestamp=time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
         environment=settings.environment,
+        platform="HuggingFace Spaces",
         system_initialization=system_state.get_status()
     )
 
@@ -228,6 +230,7 @@ async def root():
     return {
         "message": "HackRx 6.0 Intelligent Query-Retrieval System",
         "status": "operational",
+        "platform": "HuggingFace Spaces",
         "system_initialization": system_state.get_status(),
         "endpoints": {
             "health": "/health",
@@ -243,6 +246,7 @@ async def status_check():
     Detailed status endpoint for monitoring initialization
     """
     return {
+        "platform": "HuggingFace Spaces",
         "system": system_state.get_status(),
         "ready_for_processing": system_state.initialization_complete,
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
@@ -255,12 +259,12 @@ async def hackrx_run(request: HackRXRequest):
     Main HackRx endpoint for document processing and question answering
     
     This endpoint ensures system is fully initialized before processing requests.
-    First request may take longer due to model loading.
+    First request may take longer due to model loading on HuggingFace Spaces.
     """
     start_time = time.time()
     
     try:
-        logger.info(f"Processing request with {len(request.questions)} questions")
+        logger.info(f"Processing HF Spaces request with {len(request.questions)} questions")
         logger.info(f"Document URL: {request.documents}")
         
         # Validate inputs
@@ -277,7 +281,7 @@ async def hackrx_run(request: HackRXRequest):
             if "timeout" in str(e).lower():
                 raise HTTPException(
                     status_code=503, 
-                    detail="System is still initializing. Please try again in a few moments."
+                    detail="System is still initializing on HuggingFace Spaces. Please try again in a few moments."
                 )
             elif "initialization failed" in str(e).lower():
                 raise HTTPException(
@@ -299,9 +303,9 @@ async def hackrx_run(request: HackRXRequest):
             raise HTTPException(status_code=500, detail="Processing error: answer count mismatch")
         
         processing_time = time.time() - start_time
-        log_performance_metric("hackrx_run", processing_time, len(request.questions))
+        log_performance_metric("hackrx_run_hf_spaces", processing_time, len(request.questions))
         
-        logger.info(f"Successfully processed {len(request.questions)} questions in {processing_time:.2f}s")
+        logger.info(f"Successfully processed {len(request.questions)} questions on HF Spaces in {processing_time:.2f}s")
         
         return HackRXResponse(answers=answers)
         
@@ -311,7 +315,7 @@ async def hackrx_run(request: HackRXRequest):
         
     except Exception as e:
         processing_time = time.time() - start_time
-        logger.error(f"Request processing failed after {processing_time:.2f}s: {e}", exc_info=True)
+        logger.error(f"HF Spaces request processing failed after {processing_time:.2f}s: {e}", exc_info=True)
         
         raise HTTPException(
             status_code=500,
@@ -319,22 +323,22 @@ async def hackrx_run(request: HackRXRequest):
         )
 
 
-# Development server configuration
+# HuggingFace Spaces configuration
 if __name__ == "__main__":
     import uvicorn
     
     settings = get_settings()
     
-    # Use PORT environment variable for Render deployment
-    port = int(os.environ.get("PORT", 8000))
+    # HuggingFace Spaces uses port 7860
+    port = int(os.environ.get("PORT", 7860))
     
-    logger.info(f"🚀 Starting development server on port {port}")
+    logger.info(f"🚀 Starting HuggingFace Spaces server on port {port}")
     
     uvicorn.run(
         "src.main:app",
         host="0.0.0.0",
         port=port,
-        reload=settings.debug,
+        reload=False,  # Don't use reload in production
         log_level=settings.log_level.lower(),
         access_log=True
     )
